@@ -1,0 +1,33 @@
+FROM ubuntu:16.04
+
+MAINTAINER Saurabh Baid "Saurabh.Baid@incedoinc.com"
+
+
+ENV DISPLAY :99
+ENV RES "1280x1024x24"
+
+# COPY ROBOT CODE
+copy brat_integration_branch /brat
+
+#INSTALL PYTHON
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y --no-install-recommends --allow-unauthenticated \
+    python python-pip build-essential libssl-dev libffi-dev python-dev\
+    vim chromium-chromedriver &&\
+    apt-get autoremove &&\
+    apt-get autoremove && \
+    rm -rf /var/lib/apt/lists
+
+# configure XVFB
+RUN echo -e "Starting Xvfb on display ${DISPLAY} with res ${RES}" && \
+    Xvfb ${DISPLAY} -ac -screen 0 ${RES} +extension RANDR &
+
+EXPOSE $DISPLAY
+
+
+
+# Install Requirement.txt
+RUN pip install ~/brat_integration_branch/requirement.txt
+RUN pip install configparser
+
+
