@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="page-content-wrapper">
+        <h1>Add New Rule</h1>
+    <br>
+    <form action="" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form }}
+    </table>
+    <input type="submit" value="Submit" />
+</form>
+    </div>
+
+
+{% endblock %}

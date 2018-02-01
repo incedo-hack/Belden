@@ -1,0 +1,66 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Log File Analyzer</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{% static 'css/simple-sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <!link href="css/simple-sidebar.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div id="wrapper" class="'toggled toggled">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand"><a href="#"><h3>Log File Analyzer</h3></a>
+                </li>
+                <li><a href="#">Home</a></li>
+                <li><a href="/LFA/AddNewPlugin">Add Plugin</a></li>
+                <li><a href="/LFA/ViewPlugins">View All Plugins</a></li>
+                <li><a href="/LFA/AddLogs">Upload Logs</a></li>
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+        <div>
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            {% block content %}
+            {% endblock %}
+        </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+    </script>
+
+</body>
+
+</html>
