@@ -2,8 +2,6 @@ import django_tables2 as tables
 from .models import plugins
 
 class analysis_table_view(tables.Table):
-    class meta:
-        attrs = {"class": "paleblue"}
     bug_id = tables.Column()
     description = tables.Column()
     recomendation = tables.Column()

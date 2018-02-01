@@ -7,10 +7,11 @@ import stat
 import glob
 import shutil
 import tarfile
-from analyse import analyseEngine
+from analyse import analyseEngine, analyseRX
 
 # Globals
 import ConnecttoSql
+import traceback
 
 TempFilePath = r'/tmp/logs'
 ERROR = -1;
@@ -21,17 +22,16 @@ MODE = stat.S_IRUSR | stat.S_IWUSR  # This is 0o600 in octal and 384 in decimal.
 
 def unzipFile(path):
     # Check Path
+
     if not os.path.isdir(path):
         # Open the gz file and read
         with gzip.open(path, 'rb') as in_file:
             srcFile = in_file.read()
-            in_file.close()
             # Remove .gz extension
             path_to_store = path[:-3]
         with open(path_to_store, 'wb') as f:
             print("Extracting srcFile " + path_to_store)
             f.write(srcFile)
-            f.close()
 
 
 def checkAndExtract(logPath):
@@ -57,6 +57,7 @@ def checkAndExtract(logPath):
             logTar.close()
             return OK
         except:
+            traceback.print_exc()
             return ERROR
 
     else:
@@ -71,7 +72,7 @@ def cleanUp():
         shutil.rmtree(TempFilePath)
 
 
-def findMatchingRulesFromLog(path, dbData):
+def findMatchingRulesFromLog(path, dbData, rxContext):
     #print ("Finding for " + path)
     # read file from path and load in ram
     #fp = open(path, 'r')
@@ -83,30 +84,21 @@ def findMatchingRulesFromLog(path, dbData):
         #rxContext = analyseRX(rule,searchString) 
 	#if searchString in fileData:
 	#  print( path+" found " + searchString)
-    rxContext = analyseEngine(path,dbData) 
-    for line in rxContext.match_plugin:
-        print "######################################"
-        print "Proudct is   : %s" % line['product']
-        print "Description  : %s" % line['description']
-        print "Bug ID       : %s" % line['bug_id']
-        print "RCA          : %s " % line['rca']
-        print "Filename     : %s" % line['filename']
-        print "######################################"
-
+    analyseEngine(path,dbData, rxContext) 
     # print fileData
 
 
-def iterateFolder(path, dbData):
+def iterateFolder(path, dbData, rxContext):
     print ("In iterateFolder" + path)
     for files in os.listdir(path):
         absPathfile = path + "/" + files
         mode = os.stat(absPathfile).st_mode
         if S_ISDIR(mode):
-            iterateFolder(absPathfile, dbData)
+            iterateFolder(absPathfile, dbData, rxContext)
         elif S_ISREG(mode):
             if not absPathfile.endswith('.gz'):
                 os.chmod(absPathfile, 777)
-                findMatchingRulesFromLog(absPathfile, dbData)
+                findMatchingRulesFromLog(absPathfile, dbData, rxContext)
         else:
             print ('Skipping %s' % absPathfile)
 
@@ -116,15 +108,29 @@ def getAnalysis(logPath):
 
     # Please check the hard coding of paths, it should be changed.........please make.....
     if OK == checkAndExtract(logPath):
-        dbData = ConnecttoSql.fetchAllPLuginRows(r"/home/django/mysite/db.sqlite3")
-        iterateFolder(TempFilePath, dbData)
+        dbData = ConnecttoSql.fetchAllPLuginRows(r"db.sqlite3")
+        rxContext = analyseRX(dbData)
+        iterateFolder(TempFilePath, dbData, rxContext)
+        return rxContext
     else:
+        traceback.print_exc()
         print ("Failed")
+
+	import sys
 
 
 if __name__ == "__main__":
-	reload(sys)
-	sys.setdefaultencoding('utf-8')
-    	cleanUp()
-    	getAnalysis(r"/home/django/mysite/infocollect_12_12_2017_07_49_28.tar.gz")
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+    cleanUp()
+    rxContext = getAnalysis(r"/home/django/mysite/infocollect_12_12_2017_07_49_28.tar.gz")
+    for line in rxContext.match_plugin:
+        print "######################################"
+        print "Proudct is   : %s" % line['product']
+        print "Description  : %s" % line['description']
+        print "Bug ID       : %s" % line['bug_id']
+        print "RCA          : %s " % line['rca']
+        print "Filename     : %s" % line['filename']
+        print "######################################"
+
     	#cleanUp()

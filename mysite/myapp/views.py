@@ -12,7 +12,7 @@ from django.shortcuts import render
 from .form import UploadFileForm, add_new_plugin_form
 import uuid
 import os
-from IssueDBQuery import findMatchingRulesFromLog
+from IssueDBQuery import getAnalysis
 
 def index(request):
     return render(request, 'base.html')
@@ -37,25 +37,34 @@ def upload_file(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            data = handle_uploaded_file(request.FILES['file'])
+            pf, ver, mem, cpu, data = handle_uploaded_file(request.FILES['file'])
             table = analysis_table_view(data, template_name='django_tables2/bootstrap-responsive.html')
             RequestConfig(request).configure(table)
-            return render(request, 'analysis_report.html', {'table': table})
+            return render(request, 'analysis_report.html', {'table': (pf,ver,mem,cpu,table)})
     else:
         form = UploadFileForm()
     return render(request, 'upload.html', {'form': form})
 
 def handle_uploaded_file(f):
     tmp_dir_name = "temp"
-    fname = os.path.join(tmp_dir_name, uuid.uuid4().hex)
+    tmp_dir_name = os.path.join(tmp_dir_name, uuid.uuid4().hex)
+    fname = os.path.join(tmp_dir_name, f.name)
+    fname = os.path.abspath(fname)
     if not os.path.exists(tmp_dir_name):
         os.makedirs(tmp_dir_name)
     with open(fname, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
-    #findMatchingRulesFromLog(fname,)
+    print fname
 
-    data = []
-    return data
+    obj = getAnalysis(fname)
+    table_data = []
+    for elem in obj.match_plugin:
+        table_data['bug_id'] = elem['bug_id']
+        table_data['description'] = elem['description']
+        table_data['recomendation'] = elem['recomendation']
+        table_data['workaround'] = elem['workaround']
+    print table_data
+    return obj.platform, obj.version, obj.memory, obj.cpu,  table_data
 
 

@@ -24,7 +24,7 @@ def select_all_Plugins(conn):
     :return:
     """
     cur = conn.cursor()
-    cur.execute("SELECT * FROM myapp_temp")
+    cur.execute("SELECT * FROM myapp_plugins")
 
     rows = cur.fetchall()
 

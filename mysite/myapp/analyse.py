@@ -10,7 +10,7 @@ class logger(object):
         self.terminal = sys.stdout
         self.log = open(filename, "ab+")
 
-def analyseEngine (path,dbData):
+def analyseEngine (path,dbData, rxContext):
     #print ("Finding for " + path)
     # read file from path and load in ram
     #fp = open(path, 'r')
@@ -19,11 +19,18 @@ def analyseEngine (path,dbData):
     #fileData.decode('utf-8')
    
     #Create a RX class object
-    rxContext = analyseRX(dbData) 
+    #rxContext = analyseRX(dbData)
     for rule in (dbData):
         #searchString=rule['RuleString']
         #Search every rule now
-        rxContext.matchRule(rule,path)
+        if "showCommand" in path:
+           print "****** SHOW COMMAND #########"
+           rxContext.calVersion(path)
+           rxContext.calUptime(path)
+           rxContext.calCpu(path)
+           rxContext.calMemory(path)
+        else:
+           rxContext.matchRule(rule,path)
 
     #for line in rxContext.match_plugin:
         #print "######################################"
@@ -40,13 +47,15 @@ class analyseRX(logger):
         self.platform = ""
         self.release = ""
         self.version = ""
+        self.memory= ""
+        self.cpu = ""
         self.uptime = ""
         self.match_plugin=list()
         self.platform = '10RX'
         self.xdata = '' #Any extra information to be displayed
         self.dbRules = dbData
 
-    def matchRule(self,rule,filename):
+    def matchRule(self, rule,filename):
         #
         # Search in complete file
         pattern=rule['RuleString']
@@ -67,6 +76,51 @@ class analyseRX(logger):
                #append it to matchplugin list
                self.match_plugin.append(d)
 
+    def calVersion(self,path):
+        with open (path, "r") as myfile:
+           data=myfile.readlines()
+           for line in data:
+                 pattern = re.compile("Software Version")
+                 res = pattern.match(line)
+                 if res:
+                   version = line.split(":")
+                   self.version = version[1]
+                   print "version is %s" % self.version
+
+    def calUptime(self,path):
+        with open (path, "r") as myfile:
+           data=myfile.readlines()
+           for line in data:
+                 pattern = re.compile("Up Time")
+                 res = pattern.match(line)
+                 if res:
+                   version = line.split(":")
+                   self.uptime = version[1]
+                   print "UP time is %s" % self.uptime
+
+    def calMemory(self,path):
+        with open (path, "r") as myfile:
+           data=myfile.readlines()
+           for line in data:
+                 pattern = re.compile("System Memory Usage")
+                 res = pattern.match(line)
+                 if res:
+                   version = line.split(":")
+                   self.memory = version[1]
+                   print "Memory is %s" % self.memory
+
+    def calCpu(self,path):
+        with open (path, "r") as myfile:
+           data=myfile.readlines()
+           for line in data:
+                 pattern = re.compile("System CPU Usage")
+                 res = pattern.match(line)
+                 if res:
+                   version = line.split(":")
+                   self.cpu = version[1]
+                   print "CPU is %s" % self.cpu
+
+ 
 
     def checkFailure(self,data):
         status = data.find(".*ailure")
