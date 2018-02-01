@@ -25,7 +25,7 @@ SECRET_KEY = 'idc1ex$$h_=4hxj%5pgk5fjz+1(6umf^w$69hr72f4l=ok%$)d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
