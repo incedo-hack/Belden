@@ -15,7 +15,7 @@ import os
 from IssueDBQuery import getAnalysis
 
 def index(request):
-    return render(request, 'base.html')
+    return render(request, 'home.html')
 
 def add_new_plugin(request):
 

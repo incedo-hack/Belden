@@ -24,15 +24,18 @@ def unzipFile(path):
     # Check Path
 
     if not os.path.isdir(path):
+        try:
         # Open the gz file and read
-        with gzip.open(path, 'rb') as in_file:
-            srcFile = in_file.read()
-            # Remove .gz extension
-            path_to_store = path[:-3]
-        with open(path_to_store, 'wb') as f:
-            print("Extracting srcFile " + path_to_store)
-            f.write(srcFile)
-
+        	with gzip.open(path, 'rb') as in_file:
+            		srcFile = in_file.read()
+            		# Remove .gz extension
+            		path_to_store = path[:-3]
+        		with open(path_to_store, 'wb') as f:
+            			print("Extracting srcFile " + path_to_store)
+            			f.write(srcFile)
+        except:
+    		print("Ignoring Failed unziping " + path)
+		return
 
 def checkAndExtract(logPath):
     # Create temp store
@@ -115,8 +118,7 @@ def getAnalysis(logPath):
     else:
         traceback.print_exc()
         print ("Failed")
-
-	import sys
+    cleanUp
 
 
 if __name__ == "__main__":
