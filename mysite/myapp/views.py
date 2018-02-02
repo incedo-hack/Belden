@@ -38,9 +38,11 @@ def upload_file(request):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             pf, ver, mem, cpu, data = handle_uploaded_file(request.FILES['file'])
+            print data
             table = analysis_table_view(data, template_name='django_tables2/bootstrap-responsive.html')
+            print table
             RequestConfig(request).configure(table)
-            return render(request, 'analysis_report.html', {'table': (pf,ver,mem,cpu,table)})
+            return render(request, 'analysis_report.html', {'table': (pf, ver, mem, cpu, table)})
     else:
         form = UploadFileForm()
     return render(request, 'upload.html', {'form': form})
@@ -60,10 +62,12 @@ def handle_uploaded_file(f):
     obj = getAnalysis(fname)
     table_data = []
     for elem in obj.match_plugin:
-        table_data['bug_id'] = elem['bug_id']
-        table_data['description'] = elem['description']
-        table_data['recomendation'] = elem['recomendation']
-        table_data['workaround'] = elem['workaround']
+        entry = {}
+        entry['bug_id'] = elem['bug_id']
+        entry['description'] = elem['description']
+        entry['recomendation'] = elem['rca']
+        entry['workaround'] = elem['workaround']
+        table_data.append(entry)
     print table_data
     return obj.platform, obj.version, obj.memory, obj.cpu,  table_data
 

@@ -125,7 +125,7 @@ if __name__ == "__main__":
     reload(sys)
     sys.setdefaultencoding('utf-8')
     cleanUp()
-    rxContext = getAnalysis(r"/home/django/mysite/infocollect_12_12_2017_07_49_28.tar.gz")
+    rxContext = getAnalysis(r"/home/saurabh/Belden/mysite/temp/0189be9badcd4807ae1b889d182e7610/infocollect_02_01_2018_10_32_4.tar.gz")
     for line in rxContext.match_plugin:
         print "######################################"
         print "Proudct is   : %s" % line['product']

@@ -61,6 +61,7 @@ class analyseRX(logger):
         pattern=rule['RuleString']
         #pattern="Error"
         #pattern=rule
+        print 1
         for i, line in enumerate(open(filename)):
             for match in re.finditer(pattern, line):
                #print 'Found on line %s: %s' % (i+1, match.groups())

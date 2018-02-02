@@ -31,10 +31,10 @@ def select_all_Plugins(conn):
     things = []
     for row in rows:
         things.append(dict([('ID',row[0]),
-                             ('RCA',row[1]),
-                             ('Product',row[2]),
-                            ('BugID', row[3]),
-                            ('RuleString', row[4])
+                            ('Product',row[1]),
+                            ('BugID', row[2]),
+                            ('RuleString', row[3]),
+                            ('RCA',row[4])
                             ]))
     return things
 
