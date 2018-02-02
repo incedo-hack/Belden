@@ -5,7 +5,7 @@ class analysis_table_view(tables.Table):
     bug_id = tables.Column()
     description = tables.Column()
     recomendation = tables.Column()
-    workaround = tables.Column()
+   # workaround = tables.Column()
 
 class TableView(tables.Table):
     class Meta:

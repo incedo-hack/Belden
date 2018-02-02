@@ -66,7 +66,7 @@ def handle_uploaded_file(f):
         entry['bug_id'] = elem['bug_id']
         entry['description'] = elem['description']
         entry['recomendation'] = elem['rca']
-        entry['workaround'] = elem['workaround']
+        #entry['workaround'] = elem['workaround']
         table_data.append(entry)
     print table_data
     return obj.platform, obj.version, obj.memory, obj.cpu,  table_data
