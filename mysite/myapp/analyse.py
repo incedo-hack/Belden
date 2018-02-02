@@ -62,6 +62,14 @@ class analyseRX(logger):
         #pattern="Error"
         #pattern=rule
         print 1
+
+        # Handle if rules is already a match
+        for match in self.match_plugin:
+           if match['rule_id'] == rule['ID']:
+             # Duplicate entry already present so ignore this rule
+             print "Duplicate rule detected "
+             print rule
+             return
         for i, line in enumerate(open(filename)):
             for match in re.finditer(pattern, line):
                #print 'Found on line %s: %s' % (i+1, match.groups())
@@ -76,6 +84,8 @@ class analyseRX(logger):
 
                #append it to matchplugin list
                self.match_plugin.append(d)
+               # return if we have a match in file
+               return
 
     def calVersion(self,path):
         with open (path, "r") as myfile:
